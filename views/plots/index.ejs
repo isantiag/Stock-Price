@@ -1,59 +1,28 @@
 <h1>Plots</h1>
 <hr>
 
-
-<!-- <canvas id="myChart" width="400" height="400"></canvas> -->
-
-
-<!-- <canvas id="myChart"></canvas> -->
-
-<script>
-    console.log("hello 😃")
-</script>
+<div id="plots"></div>
 
 <script>
     console.log('We are in the plots index...S')
-    // function createCanvas(){
-    //     let elCanvas
-    //     for (let i=0; i< mySymbols.length; i++){
-    //         elCanvas = document.createElement('canvas')
-    //         elCanvas.setAttribute("id","myChart"+i)
-    //         let `ctx${i}` = document.getElementById(`myChart+${i}`).getContext('2d')
 
-    //     }
-    // }
-
-    // createCanvas()
-
-    // let labels = []
-    // let data = []
-    // let t 
-    // let dt
-
-    // // for (let i=0; i< listObj.length;i++){
+    function createCanvas(){
+        let elCanvas
+        for (let i=1; i<= mySymbols.length; i++){
+            elCanvas = document.createElement('canvas')
+            elCanvas.setAttribute("id",`myChart${i}`
+        }
+    }
     
-    // for (let item in listObj[0]){
-    //     labels.push(item.substr(11,18))
-    //     data.push(listObj[0][item][4. close]))
+    createCanvas()
+    
 
-    //     console.log(item)
 
-    // }
 
-   
-        //dt = item.substr(0,10)
-
-              // console.log(item)
-//             
-            
-// //             
-
-//         }
-//     }
-    console.log(objs)
-    let ctx = document.getElementById('myChart').getContext('2d');
-        let myBarChart = new Chart(ctx, {
-            type: 'bar',
+            let `ctx${i}` = document.getElementById(`myChart+${i}`).getContext('2d')
+            for (obj in objs)
+            let `myBarChart${i}` = new Chart(`ctx${i}`, {
+            type: 'line',
             data: {
                     labels: objs.labels,
                     datasets: [{
@@ -70,48 +39,14 @@
             //     }
             // }
 })
-</script>
 
-
-<!-- <script>
-var ctx = document.getElementById('myChart').getContext('2d');
-var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
         }
     }
-});
-</script> -->
+
+
+</script>
+ 
+   
 
 
 

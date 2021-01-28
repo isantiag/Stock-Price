@@ -305,7 +305,7 @@ app.get('/plots/view',isLoggedIn, (req, res) => {
     })
     .then(user =>{
         console.log('user with symbols')
-        // let mySymbols=[]
+        let mySymbols=[]
         let data = []
         let labels =[]
         let items
@@ -315,6 +315,7 @@ app.get('/plots/view',isLoggedIn, (req, res) => {
             console.log('user.symbols greather than 0')
             user.symbols.forEach(symbol =>{
                 console.log(symbol)
+                mySymbols.push(symbol.symbol)
                 axios.get(`https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol.symbol}&interval=5min&apikey=${API_KEY}`)
                 .then(response => {
                     items = response.data['Time Series (5min)']
@@ -347,7 +348,7 @@ app.get('/plots/view',isLoggedIn, (req, res) => {
                 })
             })
             console.log(objs)
-            res.render('plots/index',{objs})
+            res.render('plots/index',{objs,mySymbols})
         }else {
             res.send('no symbols')
         }
