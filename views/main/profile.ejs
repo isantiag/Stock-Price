@@ -1,0 +1,70 @@
+<!-- <h1><%=currentUser.name%></h1> -->
+
+<h2>Profile Info</h2>
+
+<hr>
+
+<% let v = "" %>
+<% if (user.symbols.length>0){ %>
+    <div class="well">
+        <h2>
+          <a href="/watchlist">Watchlist</a>
+        </h2>
+    </div>
+
+    <div class="well">
+        <h2>
+          <a href="/plots/view">Plot Data</a>
+        </h2>
+    </div>
+   
+<%}else {%>
+  <div class="well">
+    <h2>Add symbols to your watchlist.</h2>
+  </div>
+<%}%>
+
+<div class="well">
+    <h2>
+      <a href="/notes">Notes</a>
+    </h2>
+</div>
+
+
+
+
+
+
+
+
+
+  <!-- Modal -->
+<!-- <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="exampleModalLongTitle">Add Symbol to Watchlist</h2>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="/watchlist" method="POST">
+          <div class="modal-body">  
+              <div class="form-group">
+                <select name="symbol" class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <% symbols.forEach(symbol =>{ %>
+                        <% console.log(symbol) %>
+                        <option value="<%=symbol.symbol%>"><%=symbol.symbol%></option>
+                    <%})%>
+                  </select>
+              </div>      
+          </div>
+          <div class="modal-footer">
+            <input type="submit" class="btn btn-primary">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div> -->

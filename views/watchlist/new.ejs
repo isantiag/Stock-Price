@@ -1,0 +1,20 @@
+<h3>Add Symbol to Watchlist</h3>
+
+<hr>
+
+<form action="/watchlist" method="POST"> 
+    <div class="form-group">
+        <select name="symbol" class="form-select" aria-label="Default select example">
+            <option selected>Open this select menu</option>
+            <% symbols.forEach(symbol =>{ %>
+                <% console.log(symbol) %>
+                <option value="<%=symbol.id%>"><%=symbol.symbol%></option>
+            <%})%>
+        </select>
+        <input type="submit" class="btn btn-primary"> 
+    </div>        
+</form>
+
+<hr/>
+
+<a href="/profile">&larr; Back Home</a>

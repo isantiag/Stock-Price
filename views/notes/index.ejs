@@ -1,0 +1,52 @@
+
+ <h2>Notes</h2>
+
+ <hr>
+
+<% if (user.notes.length>0) {%>
+  
+    <% user.notes.forEach(function(n) { %>
+      <div class="well">
+        <p>
+          <strong><%= n.title %></strong>
+        </p>
+        <p><%=n.content%></p>
+
+        <div class="forms">
+          <form action="/notes/edit/<%= n.id %>" method="GET">
+            <input type="submit" value="Edit">
+          </form>
+          <form action="/notes/<%=n.id%>/?_method=DELETE" method="POST">
+            <input type="submit" value="Delete">
+          </form>
+        </div>
+        
+      </div>
+
+    <% }) %>
+  
+  <%}else {%>
+    <h2>No notes in the database.</h2>
+  <%}%>
+
+  <hr />
+
+<h4>Add Notes</h4>
+
+<form action="/notes" method="POST">
+  <div class="form-group">
+    <label for="title">Title</label>
+    <input type="text" class="form-control" id="title" name="title" required>
+  </div>
+
+  <div class="form-group">
+    <label for="content">Content</label>
+    <textarea type="text" class="form-control" id="content" name="content" required></textarea>
+  </div>
+
+  <input type="submit" class="btn btn-primary">
+</form>
+
+<hr />
+
+<a href="/profile">&larr; Back Home</a>
