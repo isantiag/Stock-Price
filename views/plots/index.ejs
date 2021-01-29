@@ -1,14 +1,107 @@
 <h1>Plots</h1>
 <hr>
 
-<canvas id="myChart" width="400" height="400"></canvas>
+<% let lstSymbol =[]%>
+
+<% if (user.symbols.length>0) {%>
+  
+    <% user.symbols.forEach(function(symbol) { %>
+      <%  lstSymbol.push(symbol.symbol)%>
+
+      <!-- <div class="well">
+            <p>
+            <strong><%= symbol.symbol %></strong>
+            </p>
+            <p><%=symbol.name%></p>     
+     </div> -->
+
+    <% }) %>
+    
+  <%}else {%>
+    <div class="well">
+        <h2>No symbol in the watchlist.</h2>
+    </div>
+  <%}%>
+ 
+
+
+<!-- <canvas id="myChart" width="400" height="400"></canvas> -->
 
 
 <script>
 
-    // console.log(<%=objs%>)
 
-let ctx = document.getElementById("myChart").getContext('2d')
+// let ctx = document.getElementById("myChart").getContext('2d')
+
+let newArray = []
+let newArray1 = []
+let t
+let data ={}
+let i = 0
+let j = 0
+
+const countSeconds = (str) => {
+                const [hh = '0', mm = '0', ss = '0'] = (str || '0:0:0').split(':');
+                const hour = parseInt(hh, 10) || 0;
+                const minute = parseInt(mm, 10) || 0;
+                const second = parseInt(ss, 10) || 0;
+                return (hour*3600) + (minute*60) + (second);
+             }
+
+async function getData(){
+    <% if (lstSymbol.length>0){ %>
+        <% lstSymbol.forEach(symbol=>{%>
+            await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=<%=symbol%>&interval=5min&apikey=DY9F1LV5RBX91WFR`) 
+                .then(function(responseData) {
+                    return responseData.json();
+                })
+                .then(function(jsonData) {
+                    console.log(jsonData['Time Series (5min)'])
+                    newArray.push(jsonData['Time Series (5min)'])
+                    // let items = jsonData['Time Series (5min)']            
+                })
+        <%   })%>
+        console.log(newArray)
+    <%}%>
+}
+
+getData()
+// async function createElement(){
+//     await getData()
+//     <% if (lstSymbol.length>0){ %>
+//         <% lstSymbol.forEach(symbol => {%>
+//             const "myChart"+i = document.createElement("div")
+//             "myChart"+i.setAttribute("id","myChart"+i)
+//             const body = document.querySelector("body")
+//             body.append("myChart"+i)
+//             i++
+//         <%})%>
+//     <%}%>
+// }
+
+// createElement()
+
+// const chart = createChart(document.body, { width: 400, height: 300 });
+// const lineSeries = chart.addLineSeries();
+// lineSeries.setData([
+//     { time: '2019-04-11', value: 80.01 },
+//     { time: '2019-04-12', value: 96.63 },
+//     { time: '2019-04-13', value: 76.64 },
+//     { time: '2019-04-14', value: 81.89 },
+//     { time: '2019-04-15', value: 74.43 },
+//     { time: '2019-04-16', value: 80.01 },
+//     { time: '2019-04-17', value: 96.63 },
+//     { time: '2019-04-18', value: 76.64 },
+//     { time: '2019-04-19', value: 81.89 },
+//     { time: '2019-04-20', value: 74.43 },
+// ]);
+            
+
+
+
+
+
+            
 
 </script>
 

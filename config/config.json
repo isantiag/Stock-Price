@@ -1,16 +1,16 @@
 {
   "development": {
-    "database": "express_auth_development",
+    "database": "stock_price_development",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "test": {
-    "database": "express_auth_test",
+    "database": "stock_price_test",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "production": {
-    "database": "express_auth_production",
+    "database": "stock_price_production",
     "host": "127.0.0.1",
     "dialect": "postgres"
   }

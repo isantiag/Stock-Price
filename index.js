@@ -298,62 +298,13 @@ app.post('/symbols',isLoggedIn, (req, res) => {
 
 
 app.get('/plots/view',isLoggedIn, (req, res) => {
-    console.log('inside the route')
     db.user.findOne({
         where:{email:req.user.email},
         include: [db.symbol]
     })
     .then(user =>{
-        console.log('user with symbols')
-        let mySymbols=[]
-        let data = []
-        let labels =[]
-        let items
-        let t
-        let objs = {}
-        if (user.symbols.length>0){   
-            console.log('user.symbols greather than 0')
-            user.symbols.forEach(symbol =>{
-                console.log(symbol)
-                mySymbols.push(symbol.symbol)
-                axios.get(`https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol.symbol}&interval=5min&apikey=${API_KEY}`)
-                .then(response => {
-                    items = response.data['Time Series (5min)']
-                    // console.log('This is the list of items......')
-                    // console.log(items)
-                    
-                    for (let item in items){
-
-                        t = item.substr(11,18)
-
-                        labels.push(t)
-                        // data.open = items[item]['1. open']
-                        // data.high = items[item]['2. high']
-                        // data.low = items[item]['3. low']
-                        data.push(parseFloat(items[item]['4. close']))
-
-                    }
-                    // console.log(objs)
-                    // console.log(labels)
-                    objs.data = data
-                    objs.labels = labels
-                    // mySymbols.push(symbol)
-                    // listObj.push(obj)
-                    // console.log(objs)
-                })
-            })
-            setTimeout(function() {
-                console.log('Object')
-                // console.log(objs)
-                res.render('plots/index',{objs,mySymbols})
-            }, 5000);
-            
-        }else {
-            res.send('no symbols')
-        }
-
+        res.render('plots/index',{user})
     })
- 
 })
 
 app.get('/companies',isLoggedIn, (req, res) => {
