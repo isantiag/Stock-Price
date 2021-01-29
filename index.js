@@ -319,16 +319,10 @@ app.get('/plots/view',isLoggedIn, (req, res) => {
                 axios.get(`https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${symbol.symbol}&interval=5min&apikey=${API_KEY}`)
                 .then(response => {
                     items = response.data['Time Series (5min)']
-                    console.log('This is the list of items......')
-                    console.log(items)
+                    // console.log('This is the list of items......')
+                    // console.log(items)
+                    
                     for (let item in items){
-
-                        function toTimestamp(strDate){
-                            var datum = Date.parse(strDate);
-                            return datum/1000;
-                           }
-                          
-                        // t = toTimestamp(item)
 
                         t = item.substr(11,18)
 
@@ -338,24 +332,38 @@ app.get('/plots/view',isLoggedIn, (req, res) => {
                         // data.low = items[item]['3. low']
                         data.push(parseFloat(items[item]['4. close']))
 
-                        // console.log(data)
-                        // console.log(labels)
                     }
+                    // console.log(objs)
+                    // console.log(labels)
                     objs.data = data
                     objs.labels = labels
                     // mySymbols.push(symbol)
                     // listObj.push(obj)
+                    // console.log(objs)
                 })
             })
-            console.log(objs)
-            res.render('plots/index',{objs,mySymbols})
+            setTimeout(function() {
+                console.log('Object')
+                // console.log(objs)
+                res.render('plots/index',{objs,mySymbols})
+            }, 5000);
+            
         }else {
             res.send('no symbols')
         }
 
     })
-    
-    // res.render('main/watchlist')
+ 
+})
+
+app.get('/companies',isLoggedIn, (req, res) => {
+    db.user.findOne({
+        where:{email:req.user.email},
+        include: [db.symbol]
+    })
+    .then(user =>{
+        res.render('companies/index',{user})
+    })
 })
 
 app.get('*',(req,res)=>{

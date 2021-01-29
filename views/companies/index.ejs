@@ -1,0 +1,139 @@
+<h2>Companies Info</h2>
+
+ <hr>
+
+ 
+ <% let lstSymbol =[]%>
+
+<% if (user.symbols.length>0) {%>
+  
+    <% user.symbols.forEach(function(symbol) { %>
+      <%  lstSymbol.push(symbol.symbol)%>
+
+      <!-- <div class="well">
+            <p>
+            <strong><%= symbol.symbol %></strong>
+            </p>
+            <p><%=symbol.name%></p>     
+     </div> -->
+
+    <% }) %>
+    
+  <%}else {%>
+    <div class="well">
+        <h2>No notes in the database.</h2>
+    </div>
+  <%}%>
+ 
+
+  <script>
+
+let newArray = []
+let i = 1
+
+async function getData(){
+    <% if (lstSymbol.length>0){ %>
+        <% lstSymbol.forEach(symbol=>{%>
+            await fetch(`https://www.alphavantage.co/query?function=OVERVIEW&symbol=<%=symbol%>&apikey=DY9F1LV5RBX91WFR`) 
+                .then(function(responseData) {
+                    return responseData.json();
+                })
+                .then(function(jsonData) {
+                    console.log(jsonData);
+                    newArray.push(jsonData)
+                });
+        <%   })%>
+        console.log(newArray)
+    <%}%>
+}
+
+async function createElement(){
+        await getData()
+        await createTable()
+        <% if (lstSymbol.length>0){ %>
+            newArray.forEach(e=>{
+                const newPost = document.createElement("div")
+                newPost.setAttribute("class", "well")
+                const body = document.querySelector("body")
+                body.append(newPost)
+                const paragraph1 = document.createElement("p")
+                paragraph1.setAttribute("class", "symbol")
+                paragraph1.innerText = `Symbol: ${e.Symbol}`
+                newPost.append(paragraph1)
+                const paragraph2 = document.createElement("p")
+                paragraph2.setAttribute("class", "description")
+                paragraph2.innerText = `Description: ${e.Description}`
+                newPost.append(paragraph2)
+                const paragraph3 = document.createElement("p")
+                paragraph3.setAttribute("class", "sector")
+                paragraph3.innerText = `Sector: ${e.Sector}`
+                newPost.append(paragraph3)
+    
+        })
+        <%}%>
+        
+    }
+
+    createElement()
+
+    function createTable(){
+        <% if (lstSymbol.length>0){ %>
+            const table = document.createElement("table")
+            table.setAttribute("class", "table table-striped")
+            const body = document.querySelector("body")
+            body.append(table)
+            const thead = document.createElement("thead")
+            table.append(thead)
+            const tr1 = document.createElement("tr")
+            thead.append(tr1)
+            const th1 = document.createElement("th")
+            th1.setAttribute("scope", "col")
+            th1.innerText = `#`
+            tr1.append(th1)
+            const th2 = document.createElement("th")
+            th2.setAttribute("scope", "col")
+            th2.innerText = `52WeekHigh`
+            tr1.append(th2)
+            const th3 = document.createElement("th")
+            th3.setAttribute("scope", "col")
+            th3.innerText = `52WeekLow`
+            tr1.append(th3)
+            const th4 = document.createElement("th")
+            th4.setAttribute("scope", "col")
+            th4.innerText = `50DayMovingAverage`
+            tr1.append(th4)
+            const th5 = document.createElement("th")
+            th5.setAttribute("scope", "col")
+            th5.innerText = `200DayMovingAverage`
+            tr1.append(th5)
+            const tbody = document.createElement("tbody")
+            table.append(tbody)
+
+            newArray.forEach(e=>{
+                
+                const tr2 = document.createElement("tr")
+                tbody.append(tr2)
+                const th6 = document.createElement("th")
+                th6.setAttribute("scope", "row")
+                th6.innerText = `${i}`
+                tr2.append(th6)
+                const td1 = document.createElement("td")
+                td1.innerText = e['52WeekHigh']
+                tr2.append(td1)
+                const td2 = document.createElement("td")
+                td2.innerText = e['52WeekLow']
+                tr2.append(td2)
+                const td3 = document.createElement("td")
+                td3.innerText = e['50DayMovingAverage']
+                tr2.append(td3)
+                const td4 = document.createElement("td")
+                td4.innerText = e['200DayMovingAverage']
+                tr2.append(td4)
+                i++
+            })
+       <% } %>
+
+        }
+    
+
+  </script>

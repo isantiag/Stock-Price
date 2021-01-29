@@ -154,3 +154,95 @@ function toTimestamp(strDate){
  console.log(value)
 
 
+
+
+ 
+
+ <% let ctx = document.getElementById("myChart").getContext('2d') %> 
+
+<!-- <% let myChart = new Chart(ctx, { %>
+                    <%  type: 'line', %>
+                    <%  data: {        %>
+                            <%  labels: objs.labels, %>
+                            <%  datasets: [{ %>
+                            <%      label: 'Close Price', %>
+                            <%      data: objs.data }] %>
+                            <%   }      %> 
+             <%   }) %> -->
+
+      
+
+
+
+
+<!-- <div id="plots"></div> -->
+
+<!-- <% objs%> -->
+
+<!-- <script>
+    console.log('We are here')
+
+    function createCanvas(){
+        let elCanvas
+        for (let i=1; i<= mySymbols.length; i++){
+            elCanvas = document.createElement('canvas')
+            elCanvas.setAttribute("id",`myChart${i}`)
+            const plotsDiv = document.querySelector("#plots");
+            plotsDiv.append(elCanvas);
+        }
+    }
+    
+    createCanvas()
+    
+
+    function createPlots(){
+        for (let i=1; i<= mySymbols.length; i++){
+            let `ctx${i}` = document.getElementById(`myChart+${i}`).getContext('2d')
+            for (obj in objs){
+            let `myBarChart${i}` = new Chart(`ctx${i}`, {
+                type: 'line',
+                data: {
+                        labels: objs.labels,
+                        datasets: [{
+                            label: 'Close Price',
+                            data: objs.data }]
+                        }       
+                })
+
+        }
+    }
+
+    createPlots()
+
+
+
+
+    function toTimestamp(strDate){
+        var datum = Date.parse(strDate);
+        return datum/1000;
+       }
+      
+    // t = toTimestamp(item)
+ 
+
+
+
+    
+    
+  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+   
+
+
+
+
+
+
