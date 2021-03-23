@@ -15,6 +15,7 @@
     "chart.js": "^2.9.4",
     "circular-json": "^0.5.9",
     "connect-flash": "^0.1.1",
+    "d3": "^6.6.0",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.5",
     "express": "^4.17.1",

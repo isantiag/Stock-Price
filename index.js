@@ -1,18 +1,17 @@
-// configure environment variables
-require('dotenv').config()
+require('dotenv').config() // configure environment variables
 let express = require('express')
 let ejsLayouts = require('express-ejs-layouts')
-// let db = require('./models')
+let db = require('./models')
 let app = express()
-const axios = require('axios')
+// const axios = require('axios')
 const session = require('express-session')
 const passport = require('./config/ppConfig.js')
 const flash = require('connect-flash')
 const isLoggedIn = require('./middleware/isLoggedIn.js')
 const API_KEY = process.env.API_KEY
-var Chart = require('chart.js');
-const db = require('./models/index.js')
-const user = require('./models/user.js')
+// var Chart = require('chart.js');
+// const db = require('./models/index.js')
+// const user = require('./models/user.js')
 const methodOverride = require("method-override")
 
 
@@ -51,9 +50,19 @@ app.use(methodOverride("_method"))
 
 // bring auth to controllers
 app.use('/auth', require('./controllers/auth'))
+// bring watchlist to controllers
+app.use('/watchlist', require('./controllers/watchlist'))
+// bring notes to controllers
+app.use('/notes', require('./controllers/notes'))
+// bring symbols to controllers
+app.use('/symbols', require('./controllers/symbols'))
+// bring plots to controllers
+app.use('/plots', require('./controllers/plots'))
+// bring companies to controllers
+app.use('/companies', require('./controllers/companies'))
 
 
-// GET / - display all articles and their authors
+// GET / - Homepage
 app.get('/', (req, res) => {
     // if(req.user){
     //     res.send(`req.user: ${req.user.name}`)
@@ -117,203 +126,6 @@ app.get('/profile',isLoggedIn, (req, res) => {
         db.symbol.findAll().then(symbols =>{
             res.render('main/profile',{user,symbols})
         })
-    })
-})
-
-app.get('/watchlist',isLoggedIn, (req, res) => {
-    db.user.findOne({
-        where:{email:req.user.email},
-        include: [db.symbol]
-    })
-    .then(user =>{
-        res.render('watchlist/index',{user:user})     
-    })
-})
-
-app.get('/watchlist/new',isLoggedIn, (req, res) => {
-    db.user.findOne({
-        where:{email:req.user.email},
-        include: [db.symbol]
-    })
-    .then(user =>{
-        db.symbol.findAll().then(symbols =>{
-            res.render('watchlist/new',{user,symbols})
-        })
-    })
-})
-
-
-app.post('/watchlist',isLoggedIn, (req, res) => {
-    db.user.findOne({
-        where:{email:req.user.email}
-    })
-    .then(user =>{
-        db.symbol.findOne({
-            where:{id:req.body.symbol}
-        })
-        .then(symbol =>{
-            console.log(symbol.id)
-            user.addSymbol(symbol).then({             
-            })
-        })
-        res.redirect('/watchlist')  
-    })
-     
-})  
-
-app.delete('/watchlist/:id',isLoggedIn, (req,res)=>{
-    db.user.findOne({
-        where:{email:req.user.email},
-        include : [db.symbol]
-    })
-    .then(user =>{
-        db.symbol.findOne({
-            where:{id:req.params.id}
-        })
-    .then(symbol =>{
-        user.removeSymbol(symbol).then(()=>{
-            res.redirect('/watchlist')
-        })
-    })
-  })
-})
-
-app.get('/notes',isLoggedIn, (req, res) => {
-    db.user.findOne({
-        where:{email:req.user.email},
-        include : [db.note]
-    })
-    .then(user =>{
-        res.render('notes/index',{user})
-    })
-})
-
-app.get('/notes/edit/:id',isLoggedIn, (req, res) => {
-    db.note.findOne({
-        where:{id:req.params.id}
-    })
-    .then(note =>{
-        res.render('notes/edit',{note})
-    })
-})
-
-// To edit a specific note
-app.put("/notes/:id",isLoggedIn, (req,res)=>{
-    db.note.update({
-      title: req.body.title,
-      content: req.body.content},
-      {
-        where: {id: req.params.id}
-    }).then(noteChanged =>{
-      res.redirect('/notes')
-  })
-  })
-
-
-app.post('/notes',isLoggedIn, (req, res) => {
-    db.user.findOne({
-        where:{email:req.user.email},
-        include : [db.note]
-    })
-    .then(user =>{
-        user.createNote({
-            title:req.body.title,
-            content:req.body.content
-        })
-        .then(note =>{
-            res.redirect('/notes')
-        })
-        
-    })
-})
-
-app.delete('/notes/:id',isLoggedIn, (req,res)=>{
-    db.user.findOne({
-        where:{email:req.user.email},
-        include : [db.note]
-    })
-    .then(user =>{
-        db.note.findOne({
-            where:{id:req.params.id}
-        })
-    .then(note =>{
-        user.removeNote(note).then(()=>{
-            res.redirect('/notes')
-        })
-    })
-  })
-})
-
-app.get('/symbols',isLoggedIn, (req, res) => {
-    db.symbol.findAll().then(symbols =>{
-        res.render('symbols/index',{symbols})
-    })
-
-})
-
-app.get('/symbols/new',isLoggedIn, (req, res) => {
-        res.render('symbols/new')
-})
-
-app.get('/symbols/edit/:id',isLoggedIn, (req, res) => {
-    db.symbol.findOne({
-        where:{id:req.params.id}
-    })
-    .then(symbol =>{
-        res.render('symbols/edit',{symbol})
-    })
-})
-
-// To edit a specific symbol
-app.put("/symbols/:id",isLoggedIn, (req,res)=>{
-    db.symbol.update({
-      symbol: req.body.symbol,
-      name: req.body.name},
-      {
-        where: {id: req.params.id}
-    }).then(symbolChanged =>{
-        res.redirect('/symbols')
-  })
-  })
-
-app.delete('/symbols/:id',isLoggedIn, (req,res)=>{
-    db.symbol.destroy({
-        where:{id:req.params.id}
-    })
-    .then(rowdeleted =>{
-        res.redirect('/symbols')
-    })
-})
-
-app.post('/symbols',isLoggedIn, (req, res) => {
-    console.log(req.body.symbol)
-    db.symbol.findOrCreate({
-        where:{symbol:req.body.symbol,
-                name: req.body.name}
-    })
-    .then(([user, wasCreated]) =>{
-        res.redirect('/symbols')
-     })
-})
-
-
-app.get('/plots/view',isLoggedIn, (req, res) => {
-    db.user.findOne({
-        where:{email:req.user.email},
-        include: [db.symbol]
-    })
-    .then(user =>{
-        res.render('plots/index',{user})
-    })
-})
-
-app.get('/companies',isLoggedIn, (req, res) => {
-    db.user.findOne({
-        where:{email:req.user.email},
-        include: [db.symbol]
-    })
-    .then(user =>{
-        res.render('companies/index',{user})
     })
 })
 

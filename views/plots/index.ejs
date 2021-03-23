@@ -31,75 +31,122 @@
 <script>
 
 
-// let ctx = document.getElementById("myChart").getContext('2d')
-
+const d3 = require('d3')
 let newArray = []
-let newArray1 = []
-let t
-let data ={}
-let i = 0
-let j = 0
-
-const countSeconds = (str) => {
-                const [hh = '0', mm = '0', ss = '0'] = (str || '0:0:0').split(':');
-                const hour = parseInt(hh, 10) || 0;
-                const minute = parseInt(mm, 10) || 0;
-                const second = parseInt(ss, 10) || 0;
-                return (hour*3600) + (minute*60) + (second);
-             }
 
 async function getData(){
     <% if (lstSymbol.length>0){ %>
         <% lstSymbol.forEach(symbol=>{%>
-            await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=<%=symbol%>&interval=5min&apikey=DY9F1LV5RBX91WFR`) 
+            await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=<%=symbol%>&apikey=DY9F1LV5RBX91WFR`) 
                 .then(function(responseData) {
                     return responseData.json();
                 })
                 .then(function(jsonData) {
-                    console.log(jsonData['Time Series (5min)'])
-                    newArray.push(jsonData['Time Series (5min)'])
-                    // let items = jsonData['Time Series (5min)']            
+                    console.log(jsonData['Time Series (Daily)'])
+                    for (item in jsonData['Time Series (Daily)']){
+                        jsonData['Time Series (Daily)'][item]['6. date'] = item
+                    }
+                    newArray.push(jsonData['Time Series (Daily)'])       
                 })
         <%   })%>
-        console.log(newArray)
+            
+        // console.log(newArray)
     <%}%>
 }
 
-getData()
-// async function createElement(){
-//     await getData()
-//     <% if (lstSymbol.length>0){ %>
-//         <% lstSymbol.forEach(symbol => {%>
-//             const "myChart"+i = document.createElement("div")
-//             "myChart"+i.setAttribute("id","myChart"+i)
-//             const body = document.querySelector("body")
-//             body.append("myChart"+i)
-//             i++
-//         <%})%>
-//     <%}%>
-// }
 
-// createElement()
 
-// const chart = createChart(document.body, { width: 400, height: 300 });
-// const lineSeries = chart.addLineSeries();
-// lineSeries.setData([
-//     { time: '2019-04-11', value: 80.01 },
-//     { time: '2019-04-12', value: 96.63 },
-//     { time: '2019-04-13', value: 76.64 },
-//     { time: '2019-04-14', value: 81.89 },
-//     { time: '2019-04-15', value: 74.43 },
-//     { time: '2019-04-16', value: 80.01 },
-//     { time: '2019-04-17', value: 96.63 },
-//     { time: '2019-04-18', value: 76.64 },
-//     { time: '2019-04-19', value: 81.89 },
-//     { time: '2019-04-20', value: 74.43 },
-// ]);
+async function createPlot(){
+    await getData()
+    newArray.forEach(array => {
+        console.log('11111')
+        console.log(array)
+        chart = {
+            const svg = d3.create("svg")
+            .attr("viewBox", [0, 0, width, 600]);
             
+            svg.append("g")
+            .call(xAxis);
+            
+            svg.append("g")
+            .call(yAxis);
+            
+            const g = svg.append("g")
+            .attr("stroke-linecap", "round")
+            .attr("stroke", "black")
+            .selectAll("g")
+            .data(array)
+            .join("g")
+            .attr("transform", d => `translate(${x(d['6. date'])},0)`);
+            
+            g.append("line")
+            .attr("y1", d => y(d['3. low']))
+            .attr("y2", d => y(d['2. high']));
+            
+            g.append("line")
+            .attr("y1", d => y(d['1. open']))
+            .attr("y2", d => y(d['4. close']))
+            .attr("stroke-width", x.bandwidth())
+            .attr("stroke", d => d['1. open'] > d['4. close'] ? d3.schemeSet1[0]
+            : d['4. close'] > d['1. open'] ? d3.schemeSet1[2]
+            : d3.schemeSet1[8]);
+            
+            g.append("title")
+            .text(d => `${formatDate(d['6. date'])}
+            Open: ${formatValue(d['1. open'])}
+            Close: ${formatValue(d['4. close'])} (${formatChange(d['1. open'], d['4. close'])})
+            Low: ${formatValue(d['3. low'])}
+            High: ${formatValue(d['2. high'])}`);
+            
+            return svg.node();
+        }
+        margin = ({top: 20, right: 30, bottom: 30, left: 40})
 
+        x = d3.scaleBand()
+            .domain(d3.utcDay
+                .range(data[0]['6. date'], +data[data.length - 1]['6. date'] + 1)
+                .filter(d => d.getUTCDay() !== 0 && d.getUTCDay() !== 6))
+            .range([margin.left, width - margin.right])
+            .padding(0.2)
 
+            y = d3.scaleLog()
+                .domain([d3.min(data, d => d['3. low']), d3.max(data, d => d['2. high'])])
+                .rangeRound([height - margin.bottom, margin.top])
 
+            xAxis = g => g
+                .attr("transform", `translate(0,${height - margin.bottom})`)
+                .call(d3.axisBottom(x)
+                    .tickValues(d3.utcMonday
+                        .every(width > 720 ? 1 : 2)
+                        .range(data[0]['6. date'], data[data.length - 1]['6. date']))
+                    .tickFormat(d3.utcFormat("%-m/%-d")))
+                .call(g => g.select(".domain").remove())
 
+            yAxis = g => g
+                .attr("transform", `translate(${margin.left},0)`)
+                .call(d3.axisLeft(y)
+                    .tickFormat(d3.format("$~f"))
+                    .tickValues(d3.scaleLinear().domain(y.domain()).ticks()))
+                .call(g => g.selectAll(".tick line").clone()
+                    .attr("stroke-opacity", 0.2)
+                    .attr("x2", width - margin.left - margin.right))
+                .call(g => g.select(".domain").remove())
+
+            formatDate = d3.utcFormat("%B %-d, %Y")
+
+            formatValue = d3.format(".2f")
+
+            formatChange = {
+                const f = d3.format("+.2%");
+                return (y0, y1) => f((y1 - y0) / y0);
+            }
+
+            parseDate = d3.utcParse("%Y-%m-%d")
+
+    })
+}
+
+createPlot()
 
             
 
